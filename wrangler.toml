@@ -1,0 +1,7 @@
+name = "automate-cf-proxy"
+type = "webpack"
+account_id = "d03e586dc372d50234c45b43b62bf1ea"
+workers_dev = true
+route = ""
+zone_id = ""
+webpack_config = "webpack.config.js"
