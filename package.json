@@ -1,7 +1,7 @@
 {
   "name": "pname",
   "version": "1.0.0",
-  "description": "Cloudflare worker TypeScript template",
+  "description": "RPC proxy for Automate",
   "main": "index.js",
   "scripts": {
     "build": "webpack",
@@ -17,6 +17,7 @@
     "@cloudflare/workers-types": "^2.0.0",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
+    "@types/node": "^14.14.31",
     "chai": "^4.2.0",
     "mocha": "^8.0.1",
     "prettier": "^2.0.5",
@@ -28,6 +29,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "ethers": "^5.0.31"
   }
 }

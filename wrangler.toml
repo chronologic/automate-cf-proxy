@@ -5,3 +5,13 @@ workers_dev = true
 route = ""
 zone_id = ""
 webpack_config = "webpack.config.js"
+
+[env.production]
+name = "automate-proxy"
+webpack_config = "webpack.prod.js"
+
+[env.staging]
+name = "automate-proxy-ropsten"
+
+[dev]
+port=1337
