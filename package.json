@@ -7,6 +7,7 @@
     "build": "webpack",
     "dev": "NODE_ENV=development npm run build",
     "format": "prettier --write '**/*.{ts,js,css,json,md}'",
+    "run:dev": "wrangler dev",
     "test:clean": "rimraf ./transpiled/src ./transpiled/test",
     "test": "npm run test:clean && npm run transpile && mocha --require source-map-support/register --recursive transpiled/test",
     "transpile": "tsc --project ./test"
@@ -30,6 +31,7 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "ethers": "^5.0.31"
+    "ethers": "^5.0.31",
+    "query-string": "^6.14.1"
   }
 }
