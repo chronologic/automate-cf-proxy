@@ -1,20 +1,13 @@
-import { ethers } from 'ethers'
 import queryString from 'query-string'
 
-import { INFURA_URL } from './env'
-import { IJsonRpcRequest, IJsonRpcResponse, InternalHandler, IParsedRequest } from './types'
-
-const handlers: {
-  [key: string]: InternalHandler
-} = {
-  // net_listening: handleNetListening,
-  // eth_sendRawTransaction: handleSendRawTransaction,
-  // eth_getTransactionCount: handleGetTransactionCount,
-}
+import { getHandler } from './handlers'
+import { IParsedRequest } from './types'
 
 export async function handleRequest(request: Request): Promise<Response> {
   const parsedReq = await parseRequest(request)
   const valid = validateRequest(parsedReq)
+
+  console.log('REQ', parsedReq.body)
 
   if (!valid) {
     return new Response('Invalid Request', {
@@ -41,31 +34,19 @@ async function parseRequest(request: Request): Promise<IParsedRequest> {
 function validateRequest(parsedReq: IParsedRequest): boolean {
   let valid = true
 
-  if (!parsedReq.queryParams.email) {
+  const { email, scheduleImmediately } = parsedReq.queryParams
+
+  if (!email) {
+    valid = false
+  }
+
+  // TODO: only support immediate scheduling for now
+  // remove this when other types of scheduling are implemented
+  if (!scheduleImmediately) {
     valid = false
   }
 
   return valid
-}
-
-function getHandler(parsedReq: IParsedRequest): InternalHandler {
-  return handlers[parsedReq.body.method] || infuraFallback
-}
-
-async function infuraFallback(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
-  console.log(`Falling back "${parsedReq.body.method}" to Infura...`)
-  console.log('REQ --->', parsedReq.body)
-
-  const proxyRes = await fetch(INFURA_URL, {
-    body: JSON.stringify(parsedReq.body),
-    method: 'POST',
-  })
-
-  const resBody = await proxyRes.json()
-
-  console.log('RES <---', resBody)
-
-  return resBody
 }
 
 // const tx = ethers.utils.parseTransaction(

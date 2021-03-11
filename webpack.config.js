@@ -32,6 +32,7 @@ module.exports = {
     new webpack.EnvironmentPlugin({
       INFURA_API_KEY: undefined,
       INFURA_NETWORK: undefined,
+      AUTOMATE_PAYMENT_KEY: undefined,
     }),
   ],
 }

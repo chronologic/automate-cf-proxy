@@ -20,4 +20,6 @@ export interface IJsonRpcResponse {
 
 export interface IQueryParams {
   email: string
+  scheduleImmediately?: boolean
+  gasPriceAware?: boolean
 }
