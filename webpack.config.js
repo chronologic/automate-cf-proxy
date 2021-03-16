@@ -33,6 +33,7 @@ module.exports = {
       INFURA_API_KEY: undefined,
       INFURA_NETWORK: undefined,
       AUTOMATE_PAYMENT_KEY: undefined,
+      AUTOMATE_API_URL: undefined,
     }),
   ],
 }

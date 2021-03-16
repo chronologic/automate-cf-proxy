@@ -32,21 +32,17 @@ async function parseRequest(request: Request): Promise<IParsedRequest> {
 }
 
 function validateRequest(parsedReq: IParsedRequest): boolean {
-  let valid = true
+  const { apiKey, email } = parsedReq.queryParams
 
-  const { email, scheduleImmediately } = parsedReq.queryParams
+  if (!apiKey) {
+    return false
+  }
 
   if (!email) {
-    valid = false
+    return false
   }
 
-  // TODO: only support immediate scheduling for now
-  // remove this when other types of scheduling are implemented
-  if (!scheduleImmediately) {
-    valid = false
-  }
-
-  return valid
+  return true
 }
 
 // const tx = ethers.utils.parseTransaction(

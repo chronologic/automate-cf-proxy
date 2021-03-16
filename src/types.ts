@@ -19,7 +19,32 @@ export interface IJsonRpcResponse {
 }
 
 export interface IQueryParams {
+  apiKey: string
   email: string
-  scheduleImmediately?: boolean
+  draft?: boolean
   gasPriceAware?: boolean
+}
+
+export interface IAutomateScheduleRequest {
+  assetType: string
+  conditionAmount: string
+  conditionAsset: string
+  gasPriceAware: boolean
+  paymentEmail: string
+  paymentRefundAddress: string
+  signedTransaction: string
+  timeCondition: number
+  timeConditionTZ: string
+}
+
+export interface IAutomateScheduleResponse {
+  id: string
+  key: string
+  createdAt: string
+  paymentAddress: string
+  transactionHash: string
+}
+
+export interface IAutomateMaxNonceResponse {
+  nonce: number
 }
