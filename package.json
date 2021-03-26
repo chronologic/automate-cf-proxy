@@ -7,6 +7,8 @@
     "build": "webpack",
     "build:dev": "NODE_ENV=development npm run build",
     "dev": "wrangler dev",
+    "deploy:ropsten": "wrangler publish --env staging",
+    "deploy:mainnet": "wrangler publish --env production",
     "format": "prettier --write '**/*.{ts,js,css,json,md}'",
     "test:clean": "rimraf ./transpiled/src ./transpiled/test",
     "test": "npm run test:clean && npm run transpile && mocha --require source-map-support/register --recursive transpiled/test",
