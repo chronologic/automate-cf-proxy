@@ -8,6 +8,9 @@ webpack_config = "webpack.config.js"
 
 [env.production]
 name = "automate-proxy"
+route = "rpc.chronologic.network/*"
+account_id = "45b43575cc04812bac012c7cb9e01787"
+zone_id = "a215759d6bf8da898fc89f77570b42df"
 webpack_config = "webpack.prod.js"
 
 [env.staging]

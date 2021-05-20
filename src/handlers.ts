@@ -10,6 +10,7 @@ import {
   InternalHandler,
   IParsedRequest,
 } from './types'
+import { isTruthy } from './utils'
 
 const handlers: {
   [key: string]: InternalHandler
@@ -25,7 +26,7 @@ export function getHandler(parsedReq: IParsedRequest): InternalHandler {
 }
 
 async function handleNetListening(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
-  console.log('Handling net_listening', parsedReq)
+  // console.log('Handling net_listening', parsedReq)
   return {
     id: parsedReq.body.id,
     jsonrpc: parsedReq.body.jsonrpc,
@@ -36,21 +37,17 @@ async function handleNetListening(parsedReq: IParsedRequest): Promise<IJsonRpcRe
 async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
   const rawTx = parsedReq.body.params[0] as string
 
-  // console.log(JSON.stringify(parsedReq.body, null, 2))
-
   const automateReq: IAutomateScheduleRequest = {
     assetType: 'ethereum',
     conditionAmount: '0',
     conditionAsset: '',
-    gasPriceAware: !!parsedReq.queryParams.gasPriceAware,
+    gasPriceAware: isTruthy(parsedReq.queryParams.gasPriceAware),
     paymentEmail: parsedReq.queryParams.email,
     paymentRefundAddress: AUTOMATE_PAYMENT_KEY,
     signedTransaction: rawTx,
     timeCondition: 0,
     timeConditionTZ: '',
   }
-
-  // console.log(JSON.stringify(automateReq, null, 2))
 
   const proxyRes = await fetch(AUTOMATE_API_URL + '/scheduled?' + queryString.stringify(parsedReq.queryParams), {
     body: JSON.stringify(automateReq),
@@ -61,8 +58,6 @@ async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJso
   })
 
   const resBody = (await proxyRes.json()) as IAutomateScheduleResponse
-
-  // console.log(JSON.stringify(resBody))
 
   return {
     id: parsedReq.body.id,
@@ -128,7 +123,7 @@ async function handleGetTransactionReceipt(parsedReq: IParsedRequest): Promise<I
 }
 
 export async function infuraHandler(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
-  console.log(`Falling back "${parsedReq.body.method}" to Infura...`)
+  // console.log(`Falling back "${parsedReq.body.method}" to Infura...`)
   // console.log('REQ --->', parsedReq.body)
 
   const proxyRes = await fetch(INFURA_URL, {
