@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import queryString from 'query-string'
+import cache from './cache'
 
 import { AUTOMATE_API_URL, AUTOMATE_PAYMENT_KEY, CHAIN_ID, INFURA_URL } from './env'
 import {
@@ -37,32 +38,38 @@ async function handleNetListening(parsedReq: IParsedRequest): Promise<IJsonRpcRe
 async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
   const rawTx = parsedReq.body.params[0] as string
 
-  const automateReq: IAutomateScheduleRequest = {
-    assetType: 'ethereum',
-    conditionAmount: '0',
-    conditionAsset: '',
-    gasPriceAware: isTruthy(parsedReq.queryParams.gasPriceAware),
-    paymentEmail: parsedReq.queryParams.email,
-    paymentRefundAddress: AUTOMATE_PAYMENT_KEY,
-    signedTransaction: rawTx,
-    timeCondition: 0,
-    timeConditionTZ: '',
+  let txHash = await cache.get(rawTx)
+
+  if (!txHash) {
+    const automateReq: IAutomateScheduleRequest = {
+      assetType: 'ethereum',
+      conditionAmount: '0',
+      conditionAsset: '',
+      gasPriceAware: isTruthy(parsedReq.queryParams.gasPriceAware),
+      paymentEmail: parsedReq.queryParams.email,
+      paymentRefundAddress: AUTOMATE_PAYMENT_KEY,
+      signedTransaction: rawTx,
+      timeCondition: 0,
+      timeConditionTZ: '',
+    }
+
+    const proxyRes = await fetch(AUTOMATE_API_URL + '/scheduled?' + queryString.stringify(parsedReq.queryParams), {
+      body: JSON.stringify(automateReq),
+      headers: {
+        'content-type': 'application/json',
+      },
+      method: 'POST',
+    })
+
+    const resBody = (await proxyRes.json()) as IAutomateScheduleResponse
+    txHash = resBody.transactionHash
+    await cache.put(rawTx, txHash)
   }
-
-  const proxyRes = await fetch(AUTOMATE_API_URL + '/scheduled?' + queryString.stringify(parsedReq.queryParams), {
-    body: JSON.stringify(automateReq),
-    headers: {
-      'content-type': 'application/json',
-    },
-    method: 'POST',
-  })
-
-  const resBody = (await proxyRes.json()) as IAutomateScheduleResponse
 
   return {
     id: parsedReq.body.id,
     jsonrpc: parsedReq.body.jsonrpc,
-    result: resBody.transactionHash,
+    result: txHash,
   }
 }
 

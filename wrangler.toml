@@ -1,10 +1,13 @@
 name = "automate-cf-proxy"
 type = "webpack"
-account_id = "d03e586dc372d50234c45b43b62bf1ea"
+account_id = "45b43575cc04812bac012c7cb9e01787"
 workers_dev = true
 route = ""
 zone_id = ""
 webpack_config = "webpack.config.js"
+kv_namespaces = [
+  { binding = "AUTOMATE_PROXY_KV", id = "258e4b27222742bb850cf258268e2e22", preview_id = "08d72e384a0c4d8b87d308d2e67574be" }
+]
 
 [env.production]
 name = "automate-proxy"
@@ -18,3 +21,4 @@ name = "automate-proxy-ropsten"
 
 [dev]
 port=1337
+# http://localhost:1337?apiKey=22ImElIGcID0xOQk&email=marcin@chronologic.network&draft=true&gasPriceAware=true
