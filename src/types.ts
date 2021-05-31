@@ -23,6 +23,7 @@ export interface IQueryParams {
   email: string
   draft?: boolean
   gasPriceAware?: boolean
+  gasPrice?: number
 }
 
 export interface IAutomateScheduleRequest {

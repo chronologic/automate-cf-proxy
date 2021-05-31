@@ -1,7 +1,7 @@
 import queryString from 'query-string'
 
 import { getHandler } from './handlers'
-import { IParsedRequest } from './types'
+import { IParsedRequest, IQueryParams } from './types'
 
 export async function handleRequest(request: Request): Promise<Response> {
   const parsedReq = await parseRequest(request)
@@ -25,7 +25,10 @@ export async function handleRequest(request: Request): Promise<Response> {
 
 async function parseRequest(request: Request): Promise<IParsedRequest> {
   const body = await request.json()
-  const queryParams = queryString.parseUrl(request.url).query as any
+  const queryParams: IQueryParams = queryString.parseUrl(request.url).query as any
+  if (queryParams && queryParams.gasPrice) {
+    queryParams.gasPrice = Number(queryParams.gasPrice)
+  }
 
   return {
     body,

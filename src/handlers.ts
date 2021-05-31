@@ -11,7 +11,7 @@ import {
   InternalHandler,
   IParsedRequest,
 } from './types'
-import { isTruthy } from './utils'
+import { gweiToWeiHex, isTruthy } from './utils'
 
 const handlers: {
   [key: string]: InternalHandler
@@ -20,6 +20,7 @@ const handlers: {
   eth_sendRawTransaction: handleSendRawTransaction,
   eth_getTransactionCount: handleGetTransactionCount,
   eth_getTransactionReceipt: handleGetTransactionReceipt,
+  eth_gasPrice: handleGasPrice,
 }
 
 export function getHandler(parsedReq: IParsedRequest): InternalHandler {
@@ -127,6 +128,26 @@ async function handleGetTransactionReceipt(parsedReq: IParsedRequest): Promise<I
     jsonrpc: parsedReq.body.jsonrpc,
     result: res,
   }
+}
+
+async function handleGasPrice(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
+  if (parsedReq.queryParams.gasPrice) {
+    return {
+      id: parsedReq.body.id,
+      jsonrpc: parsedReq.body.jsonrpc,
+      result: gweiToWeiHex(parsedReq.queryParams.gasPrice),
+    }
+  }
+
+  return infuraHandler(parsedReq)
+
+  // console.log('Handling eth_gasPrice', parsedReq)
+  // return {
+  //   id: parsedReq.body.id,
+  //   jsonrpc: parsedReq.body.jsonrpc,
+  //   // result: '0x12a05f200',
+  //   result: '0x1CA35F0E00',
+  // }
 }
 
 export async function infuraHandler(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
