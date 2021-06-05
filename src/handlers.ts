@@ -21,6 +21,7 @@ const handlers: {
   eth_getTransactionCount: handleGetTransactionCount,
   eth_getTransactionReceipt: handleGetTransactionReceipt,
   eth_gasPrice: handleGasPrice,
+  eth_call: handleCall,
 }
 
 export function getHandler(parsedReq: IParsedRequest): InternalHandler {
@@ -150,9 +151,26 @@ async function handleGasPrice(parsedReq: IParsedRequest): Promise<IJsonRpcRespon
   // }
 }
 
+async function handleCall(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
+  // md5 hash of 'automate'
+  if (
+    parsedReq.body.params &&
+    parsedReq.body.params[0] &&
+    parsedReq.body.params[0].to === '0x00000000e7fdc80c0728d856260f92fde10af019'
+  ) {
+    return {
+      id: parsedReq.body.id,
+      jsonrpc: parsedReq.body.jsonrpc,
+      result: 'automate/v1',
+    }
+  }
+
+  return infuraHandler(parsedReq)
+}
+
 export async function infuraHandler(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
-  // console.log(`Falling back "${parsedReq.body.method}" to Infura...`)
-  // console.log('REQ --->', parsedReq.body)
+  console.log(`Falling back "${parsedReq.body.method}" to Infura...`)
+  console.log('REQ --->', parsedReq.body)
 
   const proxyRes = await fetch(INFURA_URL, {
     body: JSON.stringify(parsedReq.body),
@@ -161,7 +179,7 @@ export async function infuraHandler(parsedReq: IParsedRequest): Promise<IJsonRpc
 
   const resBody = await proxyRes.json()
 
-  // console.log('RES <---', resBody)
+  console.log('RES <---', resBody)
 
   return resBody
 }
