@@ -24,6 +24,7 @@ export interface IQueryParams {
   draft?: boolean
   gasPriceAware?: boolean
   gasPrice?: number
+  confirmationTime?: string
 }
 
 export interface IAutomateScheduleRequest {

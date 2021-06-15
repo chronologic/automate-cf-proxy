@@ -152,16 +152,19 @@ async function handleGasPrice(parsedReq: IParsedRequest): Promise<IJsonRpcRespon
 }
 
 async function handleCall(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
-  // md5 hash of 'automate'
   if (
     parsedReq.body.params &&
     parsedReq.body.params[0] &&
+    // md5 hash of 'automate'
     parsedReq.body.params[0].to === '0x00000000e7fdc80c0728d856260f92fde10af019'
   ) {
+    const queryParams = { ...parsedReq.queryParams }
+    delete (queryParams as any).apiKey
+
     return {
       id: parsedReq.body.id,
       jsonrpc: parsedReq.body.jsonrpc,
-      result: 'automate/v1',
+      result: { client: 'automate', params: queryParams },
     }
   }
 
