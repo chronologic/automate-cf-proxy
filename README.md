@@ -21,7 +21,7 @@ async function isConnectedToAutomate() {
     ],
   })
 
-  return res.includes('automate')
+  return res.client === 'automate'
 }
 ```
 
