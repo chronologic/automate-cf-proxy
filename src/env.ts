@@ -9,3 +9,4 @@ export const INFURA_URL = `https://${INFURA_NETWORK}.infura.io/v3/${INFURA_API_K
 export const CHAIN_ID = chainIds[INFURA_NETWORK]
 export const AUTOMATE_PAYMENT_KEY = process.env.AUTOMATE_PAYMENT_KEY as string
 export const AUTOMATE_API_URL = process.env.AUTOMATE_API_URL as string
+export const SENTRY_DSN = process.env.SENTRY_DSN as string

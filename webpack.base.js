@@ -29,6 +29,7 @@ module.exports = (mode) => ({
       INFURA_NETWORK: undefined,
       AUTOMATE_PAYMENT_KEY: undefined,
       AUTOMATE_API_URL: undefined,
+      SENTRY_DSN: undefined,
     }),
   ],
 })

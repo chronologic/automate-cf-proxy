@@ -1,26 +1,33 @@
 import queryString from 'query-string'
 
 import { getHandler } from './handlers'
+import { handleException } from './sentry'
 import { IParsedRequest, IQueryParams } from './types'
 
-export async function handleRequest(request: Request): Promise<Response> {
-  const parsedReq = await parseRequest(request)
-  const valid = validateRequest(parsedReq)
+export async function handleRequest(event: FetchEvent): Promise<Response> {
+  let ctx: any
+  try {
+    const parsedReq = await parseRequest(event.request)
+    ctx = parsedReq
+    const valid = validateRequest(parsedReq)
 
-  console.log('REQ --->', parsedReq.body)
+    console.log('REQ --->', parsedReq.body)
 
-  if (!valid) {
-    return new Response('Invalid Request', {
-      status: 400,
-    })
+    if (!valid) {
+      return new Response('Invalid Request', {
+        status: 400,
+      })
+    }
+
+    const handler = getHandler(parsedReq)
+    const resBody = await handler(parsedReq)
+
+    console.log('<--- RES', resBody)
+
+    return new Response(JSON.stringify(resBody))
+  } catch (e) {
+    return handleException(e, event, ctx)
   }
-
-  const handler = getHandler(parsedReq)
-  const resBody = await handler(parsedReq)
-
-  console.log('<--- RES', resBody)
-
-  return new Response(JSON.stringify(resBody))
 }
 
 async function parseRequest(request: Request): Promise<IParsedRequest> {
