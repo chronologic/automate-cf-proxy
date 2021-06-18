@@ -4,6 +4,7 @@ import cache from './cache'
 
 import { AUTOMATE_API_URL, AUTOMATE_PAYMENT_KEY, CHAIN_ID, INFURA_URL } from './env'
 import {
+  IAutomateGasEstimateResponse,
   IAutomateMaxNonceResponse,
   IAutomateScheduleRequest,
   IAutomateScheduleResponse,
@@ -11,7 +12,10 @@ import {
   InternalHandler,
   IParsedRequest,
 } from './types'
-import { gweiToWeiHex, isTruthy } from './utils'
+import { decToHex, gweiToWeiHex, isTruthy } from './utils'
+
+const xfaiContract = '0xd622dbd384d8c682f1dfe2ec18809c6bcd09bd40'
+const maxXfaiGasLimit = 510_000
 
 const handlers: {
   [key: string]: InternalHandler
@@ -21,6 +25,7 @@ const handlers: {
   eth_getTransactionCount: handleGetTransactionCount,
   eth_getTransactionReceipt: handleGetTransactionReceipt,
   eth_gasPrice: handleGasPrice,
+  eth_estimateGas: handleEstimateGas,
   eth_call: handleCall,
 }
 
@@ -140,15 +145,35 @@ async function handleGasPrice(parsedReq: IParsedRequest): Promise<IJsonRpcRespon
     }
   }
 
-  return infuraHandler(parsedReq)
+  if (parsedReq.queryParams.confirmationTime) {
+    const proxyRes = await fetch(
+      `${AUTOMATE_API_URL}/ethereum/estimateGas?confirmationTime=${parsedReq.queryParams.confirmationTime}`,
+    )
+    const resBody = (await proxyRes.json()) as IAutomateGasEstimateResponse
 
-  // console.log('Handling eth_gasPrice', parsedReq)
-  // return {
-  //   id: parsedReq.body.id,
-  //   jsonrpc: parsedReq.body.jsonrpc,
-  //   // result: '0x12a05f200',
-  //   result: '0x1CA35F0E00',
-  // }
+    return {
+      id: parsedReq.body.id,
+      jsonrpc: parsedReq.body.jsonrpc,
+      result: gweiToWeiHex(resBody.gwei),
+    }
+  }
+
+  return infuraHandler(parsedReq)
+}
+
+async function handleEstimateGas(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
+  const res = await infuraHandler(parsedReq)
+
+  try {
+    if (parsedReq.body.params[0].to === xfaiContract && res.error) {
+      delete res.error
+      res.result = decToHex(maxXfaiGasLimit)
+    }
+  } catch (e) {
+    //
+  }
+
+  return res
 }
 
 async function handleCall(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
@@ -173,7 +198,7 @@ async function handleCall(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> 
 
 export async function infuraHandler(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
   console.log(`Falling back "${parsedReq.body.method}" to Infura...`)
-  console.log('REQ --->', parsedReq.body)
+  // console.log('REQ --->', parsedReq.body)
 
   const proxyRes = await fetch(INFURA_URL, {
     body: JSON.stringify(parsedReq.body),
@@ -182,7 +207,7 @@ export async function infuraHandler(parsedReq: IParsedRequest): Promise<IJsonRpc
 
   const resBody = await proxyRes.json()
 
-  console.log('RES <---', resBody)
+  // console.log('RES <---', resBody)
 
   return resBody
 }

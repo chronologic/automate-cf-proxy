@@ -22,7 +22,7 @@ export async function handleRequest(event: FetchEvent): Promise<Response> {
     const handler = getHandler(parsedReq)
     const resBody = await handler(parsedReq)
 
-    console.log('<--- RES', resBody)
+    console.log('<--- RES', parsedReq.body.method, resBody)
 
     return new Response(JSON.stringify(resBody))
   } catch (e) {

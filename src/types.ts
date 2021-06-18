@@ -16,6 +16,7 @@ export interface IJsonRpcResponse {
   id: number
   jsonrpc: string
   result: any
+  error?: any
 }
 
 export interface IQueryParams {
@@ -49,4 +50,8 @@ export interface IAutomateScheduleResponse {
 
 export interface IAutomateMaxNonceResponse {
   nonce: number
+}
+
+export interface IAutomateGasEstimateResponse {
+  gwei: number
 }
