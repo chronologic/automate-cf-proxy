@@ -1,22 +1,19 @@
 import queryString from 'query-string'
 
 import { getHandler } from './handlers'
-import { handleException } from './sentry'
+import { reportException } from './sentry'
 import { IParsedRequest, IQueryParams } from './types'
 
 export async function handleRequest(event: FetchEvent): Promise<Response> {
-  let ctx: any
+  let parsedReq: IParsedRequest | null = null
   try {
-    const parsedReq = await parseRequest(event.request)
-    ctx = parsedReq
+    parsedReq = await parseRequest(event.request)
     const valid = validateRequest(parsedReq)
 
     console.log('REQ --->', parsedReq.body)
 
     if (!valid) {
-      return new Response('Invalid Request', {
-        status: 400,
-      })
+      return handleException('Invalid request', parsedReq)
     }
 
     const handler = getHandler(parsedReq)
@@ -26,7 +23,8 @@ export async function handleRequest(event: FetchEvent): Promise<Response> {
 
     return new Response(JSON.stringify(resBody))
   } catch (e) {
-    return handleException(e, event, ctx)
+    const eventId = reportException(e, event, parsedReq)
+    return handleException(`${e?.message} [eventId: ${eventId}]`, parsedReq)
   }
 }
 
@@ -55,4 +53,14 @@ function validateRequest(parsedReq: IParsedRequest): boolean {
   }
 
   return true
+}
+
+function handleException(msg: string, parsedReq: IParsedRequest | null): Response {
+  const res = {
+    id: parsedReq?.body?.id,
+    jsonrpc: parsedReq?.body?.jsonrpc,
+    error: { code: -32000, message: msg },
+  }
+
+  return new Response(JSON.stringify(res))
 }
