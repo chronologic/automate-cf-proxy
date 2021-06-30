@@ -6,3 +6,4 @@ worker
 .env.production
 .notes
 wrangler.toml
+ngrok

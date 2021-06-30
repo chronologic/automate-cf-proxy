@@ -1,8 +1,10 @@
 import { ethers } from 'ethers'
 import queryString from 'query-string'
+
+import automateApi from './automateApi'
 import cache from './cache'
 
-import { AUTOMATE_API_URL, AUTOMATE_PAYMENT_KEY, CHAIN_ID, INFURA_URL } from './env'
+import { AUTOMATE_PAYMENT_KEY, CHAIN_ID, INFURA_URL } from './env'
 import {
   IAutomateGasEstimateResponse,
   IAutomateMaxNonceResponse,
@@ -60,15 +62,11 @@ async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJso
       timeConditionTZ: '',
     }
 
-    const proxyRes = await fetch(AUTOMATE_API_URL + '/scheduled?' + queryString.stringify(parsedReq.queryParams), {
-      body: JSON.stringify(automateReq),
-      headers: {
-        'content-type': 'application/json',
-      },
-      method: 'POST',
-    })
+    const resBody: IAutomateScheduleResponse = await automateApi.post(
+      '/scheduled?' + queryString.stringify(parsedReq.queryParams),
+      automateReq,
+    )
 
-    const resBody = (await proxyRes.json()) as IAutomateScheduleResponse
     txHash = resBody.transactionHash
     await cache.put(rawTx, txHash)
   }
@@ -83,14 +81,10 @@ async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJso
 async function handleGetTransactionCount(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
   const [address] = parsedReq.body.params
 
-  const proxyRes = await fetch(
-    AUTOMATE_API_URL +
-      '/address/maxNonce?' +
-      queryString.stringify({ ...parsedReq.queryParams, address, chainId: CHAIN_ID }),
+  const resBody: IAutomateMaxNonceResponse = await automateApi.get(
+    '/address/maxNonce?' + queryString.stringify({ ...parsedReq.queryParams, address, chainId: CHAIN_ID }),
   )
-
-  const proxyResBody = (await proxyRes.clone().json()) as IAutomateMaxNonceResponse
-  const txCountAutomate = proxyResBody.nonce + 1
+  const txCountAutomate = resBody.nonce + 1
 
   const infuraRes = await infuraHandler(parsedReq)
   const txCountBlockchain = ethers.BigNumber.from(infuraRes.result).toNumber()
@@ -146,10 +140,9 @@ async function handleGasPrice(parsedReq: IParsedRequest): Promise<IJsonRpcRespon
   }
 
   if (parsedReq.queryParams.confirmationTime) {
-    const proxyRes = await fetch(
-      `${AUTOMATE_API_URL}/ethereum/estimateGas?confirmationTime=${parsedReq.queryParams.confirmationTime}`,
+    const resBody: IAutomateGasEstimateResponse = await automateApi.get(
+      `/ethereum/estimateGas?confirmationTime=${parsedReq.queryParams.confirmationTime}`,
     )
-    const resBody = (await proxyRes.json()) as IAutomateGasEstimateResponse
 
     return {
       id: parsedReq.body.id,
