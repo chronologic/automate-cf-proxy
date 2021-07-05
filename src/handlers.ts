@@ -29,6 +29,7 @@ const handlers: {
   eth_gasPrice: handleGasPrice,
   eth_estimateGas: handleEstimateGas,
   eth_call: handleCall,
+  automate_test: handleAutomateTest,
 }
 
 export function getHandler(parsedReq: IParsedRequest): InternalHandler {
@@ -203,4 +204,8 @@ export async function infuraHandler(parsedReq: IParsedRequest): Promise<IJsonRpc
   // console.log('RES <---', resBody)
 
   return resBody
+}
+
+async function handleAutomateTest(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
+  throw new Error('Implementme')
 }
