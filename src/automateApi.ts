@@ -38,5 +38,3 @@ export default {
   post,
   get,
 }
-
-post('/?email=marcin+demo@digistrats.com&apiKey=x9fQxC2vmj8mW5gW&draft=true&gasPriceAware=true', {})
