@@ -30,6 +30,7 @@ const handlers: {
   eth_estimateGas: handleEstimateGas,
   eth_call: handleCall,
   automate_test: handleAutomateTest,
+  cache_test: handleCacheTest,
 }
 
 export function getHandler(parsedReq: IParsedRequest): InternalHandler {
@@ -64,7 +65,7 @@ async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJso
     }
 
     const resBody: IAutomateScheduleResponse = await automateApi.post(
-      '/scheduled?' + queryString.stringify(parsedReq.queryParams),
+      '/scheduled?source=proxy&' + queryString.stringify(parsedReq.queryParams),
       automateReq,
     )
 
@@ -208,4 +209,23 @@ export async function infuraHandler(parsedReq: IParsedRequest): Promise<IJsonRpc
 
 async function handleAutomateTest(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
   throw new Error('Implementme')
+}
+
+const cacheObj: {
+  [key: string]: string
+} = {}
+
+async function handleCacheTest(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
+  const payload = parsedReq.body.params[0] as string
+  const kvVal = await cache.get(payload)
+  const isInKV = !!kvVal
+  const isInCache = !!cacheObj[payload]
+  await cache.put(payload, payload)
+  cacheObj[payload] = payload
+
+  return {
+    id: parsedReq.body.id,
+    jsonrpc: parsedReq.body.jsonrpc,
+    result: { isInKV, isInCache, cacheObj },
+  }
 }
