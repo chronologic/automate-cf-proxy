@@ -63,10 +63,9 @@ async function handleGasPrice(parsedReq: IParsedRequest): Promise<IJsonRpcRespon
 }
 
 async function fallbackHandler(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
-  console.log(`Falling back "${parsedReq.body.method}" to default handler...`)
-  // console.log('REQ --->', parsedReq.body)
-
   const rpcUrl = RPCS[parsedReq.queryParams.network]
+  console.log(`Falling back "${parsedReq.body.method}" to ${rpcUrl}...`)
+  // console.log('REQ --->', parsedReq.body)
 
   const proxyRes = await fetch(rpcUrl, {
     body: JSON.stringify(parsedReq.body),

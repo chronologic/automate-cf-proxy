@@ -13,12 +13,14 @@ export function getHandler(parsedReq: IParsedRequest): InternalHandler {
 }
 
 async function fallbackHandler(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
-  console.log(`Falling back "${parsedReq.body.method}" to default handler...`)
+  const rpcUrl = RPCS[parsedReq.queryParams.network]
+  console.log(`Falling back "${parsedReq.body.method}" to ${rpcUrl}...`)
   // console.log('REQ --->', parsedReq.body)
 
-  const rpcUrl = RPCS[parsedReq.queryParams.network]
-
   const proxyRes = await fetch(rpcUrl, {
+    headers: {
+      'content-type': 'application/json',
+    },
     body: JSON.stringify(parsedReq.body),
     method: 'POST',
   })
