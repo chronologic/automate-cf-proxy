@@ -1,6 +1,6 @@
 import queryString from 'query-string'
 
-import { getHandler } from './handlers'
+import { handleParsedRequest } from './handlers'
 import { reportException } from './sentry'
 import { IParsedRequest, IQueryParams } from './types'
 
@@ -8,7 +8,7 @@ export async function handleRequest(event: FetchEvent): Promise<Response> {
   let parsedReq: IParsedRequest | null = null
   try {
     parsedReq = await parseRequest(event.request)
-    const valid = validateRequest(parsedReq)
+    const valid = isRequestValid(parsedReq)
 
     console.log('REQ --->', parsedReq.body)
 
@@ -16,23 +16,27 @@ export async function handleRequest(event: FetchEvent): Promise<Response> {
       return handleException('Invalid request', parsedReq)
     }
 
-    const handler = getHandler(parsedReq)
-    const resBody = await handler(parsedReq)
+    const resBody = await handleParsedRequest(parsedReq)
 
     console.log('<--- RES', parsedReq.body.method, resBody)
 
     return new Response(JSON.stringify(resBody))
   } catch (e) {
-    const eventId = reportException(e, event, parsedReq)
-    return handleException(`${e?.message} [eventId: ${eventId}]`, parsedReq)
+    const eventId = reportException(e as any, event, parsedReq)
+    return handleException(`${(e as any)?.message} [eventId: ${eventId}]`, parsedReq)
   }
 }
 
 async function parseRequest(request: Request): Promise<IParsedRequest> {
   const body = await request.json()
   const queryParams: IQueryParams = queryString.parseUrl(request.url).query as any
-  if (queryParams && queryParams.gasPrice) {
+
+  if (queryParams?.gasPrice) {
     queryParams.gasPrice = Number(queryParams.gasPrice)
+  }
+
+  if (!queryParams?.network) {
+    queryParams.network = 'ethereum'
   }
 
   return {
@@ -41,7 +45,7 @@ async function parseRequest(request: Request): Promise<IParsedRequest> {
   }
 }
 
-function validateRequest(parsedReq: IParsedRequest): boolean {
+function isRequestValid(parsedReq: IParsedRequest): boolean {
   const { apiKey, email } = parsedReq.queryParams
 
   if (!apiKey) {
