@@ -2,8 +2,8 @@ import { ethers } from 'ethers'
 import queryString from 'query-string'
 
 import cache from '../cache'
-import { AUTOMATE_MD5_ADDRESS } from '../constants'
-import { AUTOMATE_PAYMENT_KEY, CHAIN_IDS } from '../env'
+import { AUTOMATE_MD5_ADDRESS, CHAIN_IDS } from '../constants'
+import { AUTOMATE_PAYMENT_KEY } from '../env'
 import {
   IAutomateMaxNonceResponse,
   IAutomateScheduleRequest,
