@@ -1,6 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
 
+const pkg = require('./package.json')
+
 module.exports = (mode) => ({
   target: 'webworker',
   output: {
@@ -32,6 +34,7 @@ module.exports = (mode) => ({
       AUTOMATE_PAYMENT_KEY: undefined,
       AUTOMATE_API_URL: undefined,
       SENTRY_DSN: undefined,
+      RELEASE_VERSION: pkg.version,
     }),
   ],
 })

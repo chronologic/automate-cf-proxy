@@ -5,7 +5,7 @@ import { reportException } from './sentry'
 import { IParsedRequest, IQueryParams } from './types'
 
 export async function handleRequest(event: FetchEvent): Promise<Response> {
-  let parsedReq: IParsedRequest | null = null
+  let parsedReq: IParsedRequest | undefined = undefined
   try {
     parsedReq = await parseRequest(event.request)
     const valid = isRequestValid(parsedReq)
@@ -22,7 +22,7 @@ export async function handleRequest(event: FetchEvent): Promise<Response> {
 
     return new Response(JSON.stringify(resBody))
   } catch (e) {
-    const eventId = reportException(e as any, event, parsedReq)
+    const eventId = reportException(e as any, event, parsedReq as any)
     return handleException(`${(e as any)?.message} [eventId: ${eventId}]`, parsedReq)
   }
 }
@@ -59,7 +59,7 @@ function isRequestValid(parsedReq: IParsedRequest): boolean {
   return true
 }
 
-function handleException(msg: string, parsedReq: IParsedRequest | null): Response {
+function handleException(msg: string, parsedReq?: IParsedRequest): Response {
   const res = {
     id: parsedReq?.body?.id,
     jsonrpc: parsedReq?.body?.jsonrpc,

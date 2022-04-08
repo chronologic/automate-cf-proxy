@@ -1,5 +1,7 @@
 import { SupportedNetworks } from './types'
 
+export const RELEASE_VERSION = process.env.RELEASE_VERSION as string
+
 export const CHAIN_IDS: { [key in SupportedNetworks]: number } = {
   ethereum: 1,
   ropsten: 3,

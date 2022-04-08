@@ -1,12 +1,13 @@
 import { captureError } from '@cfworker/sentry'
 
-import { SENTRY_DSN } from './env'
+import { RELEASE_VERSION, SENTRY_DSN } from './env'
+import { IParsedRequest } from './types'
 
-const environment = 'production'
-const release = '1.0.0'
+const release = RELEASE_VERSION
 
-export function reportException(err: Error, event: FetchEvent, ctx?: any): string {
+export function reportException(err: Error, event: FetchEvent, ctx?: IParsedRequest): string {
   try {
+    const environment = ctx?.queryParams.network || 'unknown'
     const { event_id, posted } = captureError(SENTRY_DSN, environment, release, err, event.request, ctx)
     event.waitUntil(posted)
 
