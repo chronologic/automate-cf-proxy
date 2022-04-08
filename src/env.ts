@@ -4,12 +4,14 @@ export const CHAIN_IDS: { [key in SupportedNetworks]: number } = {
   ethereum: 1,
   ropsten: 3,
   arbitrum: 42161,
+  arbitrumRinkeby: 421611,
 }
 
 export const RPCS: { [key in SupportedNetworks]: string } = {
   ethereum: process.env.ETHEREUM_RPC_URL as string,
   ropsten: process.env.ROPSTEN_RPC_URL as string,
   arbitrum: process.env.ARBITRUM_RPC_URL as string,
+  arbitrumRinkeby: process.env.ARBITRUM_RINKEBY_RPC_URL as string,
 }
 
 export const AUTOMATE_PAYMENT_KEY = process.env.AUTOMATE_PAYMENT_KEY as string

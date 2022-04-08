@@ -6,6 +6,7 @@ const handlerGetters: { [key in SupportedNetworks]: HandlerGetter } = {
   ethereum: getHandler_ethereum,
   ropsten: getHandler_ethereum,
   arbitrum: getHandler_arbitrum,
+  arbitrumRinkeby: getHandler_arbitrum,
 }
 
 export async function handleParsedRequest(parsedReq: IParsedRequest): Promise<any> {

@@ -6,7 +6,7 @@ export interface IInternalHandlers {
 
 export type HandlerGetter = (parsedReq: IParsedRequest) => InternalHandler
 
-export type SupportedNetworks = 'ethereum' | 'ropsten' | 'arbitrum'
+export type SupportedNetworks = 'ethereum' | 'ropsten' | 'arbitrum' | 'arbitrumRinkeby'
 
 export interface IParsedRequest {
   body: IJsonRpcRequest
