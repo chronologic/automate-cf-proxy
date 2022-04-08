@@ -63,7 +63,7 @@ async function handleGasPrice(parsedReq: IParsedRequest): Promise<IJsonRpcRespon
 }
 
 async function fallbackHandler(parsedReq: IParsedRequest): Promise<IJsonRpcResponse> {
-  console.log(`Falling back "${parsedReq.body.method}" to Infura...`)
+  console.log(`Falling back "${parsedReq.body.method}" to default handler...`)
   // console.log('REQ --->', parsedReq.body)
 
   const proxyRes = await fetch(INFURA_URL, {
