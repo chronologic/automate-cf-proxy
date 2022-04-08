@@ -1,4 +1,4 @@
-import { INFURA_URL } from '../env'
+import { RPCS } from '../env'
 import { IInternalHandlers, IJsonRpcResponse, InternalHandler, IParsedRequest } from '../types'
 import { makeHandlers } from './common'
 
@@ -16,7 +16,9 @@ async function fallbackHandler(parsedReq: IParsedRequest): Promise<IJsonRpcRespo
   console.log(`Falling back "${parsedReq.body.method}" to default handler...`)
   // console.log('REQ --->', parsedReq.body)
 
-  const proxyRes = await fetch(INFURA_URL, {
+  const rpcUrl = RPCS[parsedReq.queryParams.network]
+
+  const proxyRes = await fetch(rpcUrl, {
     body: JSON.stringify(parsedReq.body),
     method: 'POST',
   })

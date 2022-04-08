@@ -3,7 +3,7 @@ import queryString from 'query-string'
 
 import cache from '../cache'
 import { AUTOMATE_MD5_ADDRESS } from '../constants'
-import { AUTOMATE_PAYMENT_KEY, CHAIN_ID } from '../env'
+import { AUTOMATE_PAYMENT_KEY, CHAIN_IDS } from '../env'
 import {
   IAutomateMaxNonceResponse,
   IAutomateScheduleRequest,
@@ -73,9 +73,10 @@ async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJso
 function makeHandleGetTransactionCount(fallbackHandler: InternalHandler): InternalHandler {
   return async (parsedReq: IParsedRequest) => {
     const [address] = parsedReq.body.params
+    const chainId = CHAIN_IDS[parsedReq.queryParams.network]
 
     const resBody: IAutomateMaxNonceResponse = await automateApi.get(
-      '/address/maxNonce?' + queryString.stringify({ ...parsedReq.queryParams, address, chainId: CHAIN_ID }),
+      '/address/maxNonce?' + queryString.stringify({ ...parsedReq.queryParams, address, chainId: chainId }),
     )
     const txCountAutomate = resBody.nonce + 1
 

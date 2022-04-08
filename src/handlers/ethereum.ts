@@ -1,5 +1,5 @@
 import { MAX_XFAI_GAS_LIMIT, XFAI_CONTRACT_ADDRESS } from '../constants'
-import { INFURA_URL } from '../env'
+import { RPCS } from '../env'
 import {
   IAutomateGasEstimateResponse,
   IInternalHandlers,
@@ -32,7 +32,7 @@ async function handleEstimateGas(parsedReq: IParsedRequest): Promise<IJsonRpcRes
       res.result = decToHex(MAX_XFAI_GAS_LIMIT)
     }
   } catch (e) {
-    //
+    // ignore error
   }
 
   return res
@@ -66,7 +66,9 @@ async function fallbackHandler(parsedReq: IParsedRequest): Promise<IJsonRpcRespo
   console.log(`Falling back "${parsedReq.body.method}" to default handler...`)
   // console.log('REQ --->', parsedReq.body)
 
-  const proxyRes = await fetch(INFURA_URL, {
+  const rpcUrl = RPCS[parsedReq.queryParams.network]
+
+  const proxyRes = await fetch(rpcUrl, {
     body: JSON.stringify(parsedReq.body),
     method: 'POST',
   })
