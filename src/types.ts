@@ -1,5 +1,13 @@
 export type InternalHandler = (parsedReq: IParsedRequest) => Promise<IJsonRpcResponse>
 
+export interface IInternalHandlers {
+  [key: string]: InternalHandler
+}
+
+export type HandlerGetter = (parsedReq: IParsedRequest) => InternalHandler
+
+export type SupportedNetworks = 'ethereum' | 'ropsten' | 'arbitrum' | 'arbitrumRinkeby'
+
 export interface IParsedRequest {
   body: IJsonRpcRequest
   queryParams: IQueryParams
@@ -26,6 +34,7 @@ export interface IQueryParams {
   gasPriceAware?: boolean
   gasPrice?: number
   confirmationTime?: string
+  network: SupportedNetworks
 }
 
 export interface IAutomateScheduleRequest {

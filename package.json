@@ -1,6 +1,6 @@
 {
   "name": "pname",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "RPC proxy for Automate",
   "main": "index.js",
   "scripts": {
