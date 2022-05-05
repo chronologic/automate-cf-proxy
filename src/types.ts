@@ -35,6 +35,8 @@ export interface IQueryParams {
   gasPrice?: number
   confirmationTime?: string
   network: SupportedNetworks
+  rejectTxs?: boolean
+  trueNonce?: boolean
 }
 
 export interface IAutomateScheduleRequest {

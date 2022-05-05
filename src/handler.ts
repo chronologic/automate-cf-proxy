@@ -3,6 +3,7 @@ import queryString from 'query-string'
 import { handleParsedRequest } from './handlers'
 import { reportException } from './sentry'
 import { IParsedRequest, IQueryParams } from './types'
+import { isTruthy } from './utils'
 
 export async function handleRequest(event: FetchEvent): Promise<Response> {
   let parsedReq: IParsedRequest | undefined = undefined
@@ -38,6 +39,11 @@ async function parseRequest(request: Request): Promise<IParsedRequest> {
   if (!queryParams?.network) {
     queryParams.network = 'ethereum'
   }
+
+  queryParams.draft = isTruthy(queryParams.draft)
+  queryParams.gasPriceAware = isTruthy(queryParams.gasPriceAware)
+  queryParams.rejectTxs = isTruthy(queryParams.rejectTxs)
+  queryParams.trueNonce = isTruthy(queryParams.trueNonce)
 
   return {
     body,

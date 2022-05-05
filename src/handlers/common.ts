@@ -41,6 +41,10 @@ async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJso
 
   let txHash = await cache.get(rawTx)
 
+  if (parsedReq.queryParams.rejectTxs) {
+    throw new Error('Transaction rejected!')
+  }
+
   if (!txHash) {
     const automateReq: IAutomateScheduleRequest = {
       assetType: 'ethereum',
@@ -72,6 +76,12 @@ async function handleSendRawTransaction(parsedReq: IParsedRequest): Promise<IJso
 
 function makeHandleGetTransactionCount(fallbackHandler: InternalHandler): InternalHandler {
   return async (parsedReq: IParsedRequest) => {
+    const infuraRes = await fallbackHandler(parsedReq)
+
+    if (parsedReq.queryParams.trueNonce) {
+      return infuraRes
+    }
+
     const [address] = parsedReq.body.params
     const chainId = CHAIN_IDS[parsedReq.queryParams.network]
 
@@ -79,8 +89,6 @@ function makeHandleGetTransactionCount(fallbackHandler: InternalHandler): Intern
       '/address/maxNonce?' + queryString.stringify({ ...parsedReq.queryParams, address, chainId: chainId }),
     )
     const txCountAutomate = resBody.nonce + 1
-
-    const infuraRes = await fallbackHandler(parsedReq)
     const txCountBlockchain = ethers.BigNumber.from(infuraRes.result).toNumber()
 
     const txCountHex = ethers.BigNumber.from(Math.max(txCountAutomate, txCountBlockchain).toString()).toHexString()

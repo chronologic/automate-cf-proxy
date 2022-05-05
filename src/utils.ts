@@ -1,7 +1,7 @@
 import { BigNumber, BigNumberish } from 'ethers'
 
 export function isTruthy(value: any): boolean {
-  return value === true || value === 'true' || value == 1
+  return value === true || value === 'true' || value === 1 || value === '1'
 }
 
 export function gweiToWeiHex(gwei: BigNumberish): string {
