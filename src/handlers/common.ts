@@ -182,8 +182,8 @@ function makeHandleGetBlockByHash(fallbackHandler: InternalHandler): InternalHan
 
 function makeHandleCall(fallbackHandler: InternalHandler): InternalHandler {
   return async (parsedReq: IParsedRequest) => {
-    const { params = [] } = parsedReq.body
-    const [from, to] = params
+    const [callParams = {}] = parsedReq.body.params || []
+    const { from, to } = callParams
     const isAutomateCheck = from === ZERO_ADDRESS && to === AUTOMATE_MD5_ADDRESS
 
     if (isAutomateCheck) {
