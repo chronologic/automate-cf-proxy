@@ -30,7 +30,9 @@ export async function handleRequest(event: FetchEvent): Promise<Response> {
 
 async function parseRequest(request: Request): Promise<IParsedRequest> {
   const body = await request.json()
-  const queryParams: IQueryParams = queryString.parseUrl(request.url).query as any
+  // https://github.com/sindresorhus/query-string#why-is-it-parsing--as-a-space
+  const urlToParse = request.url.replace(/\+/g, '%2B')
+  const queryParams: IQueryParams = queryString.parseUrl(urlToParse, { parseBooleans: true }).query as any
 
   if (queryParams?.gasPrice) {
     queryParams.gasPrice = Number(queryParams.gasPrice)
