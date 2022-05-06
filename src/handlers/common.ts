@@ -79,7 +79,7 @@ function makeHandleGetTransactionCount(fallbackHandler: InternalHandler): Intern
   return async (parsedReq: IParsedRequest) => {
     const infuraRes = await fallbackHandler(parsedReq)
 
-    if (parsedReq.queryParams.trueNonce) {
+    if (!parsedReq.queryParams.nonceFromAutomate) {
       return infuraRes
     }
 

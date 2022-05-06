@@ -43,7 +43,7 @@ async function parseRequest(request: Request): Promise<IParsedRequest> {
   queryParams.draft = isTruthy(queryParams.draft)
   queryParams.gasPriceAware = isTruthy(queryParams.gasPriceAware)
   queryParams.rejectTxs = isTruthy(queryParams.rejectTxs)
-  queryParams.trueNonce = isTruthy(queryParams.trueNonce)
+  queryParams.nonceFromAutomate = isTruthy(queryParams.nonceFromAutomate)
 
   return {
     body,

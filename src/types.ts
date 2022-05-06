@@ -36,7 +36,7 @@ export interface IQueryParams {
   confirmationTime?: string
   network: SupportedNetworks
   rejectTxs?: boolean
-  trueNonce?: boolean
+  nonceFromAutomate?: boolean
 }
 
 export interface IAutomateScheduleRequest {
