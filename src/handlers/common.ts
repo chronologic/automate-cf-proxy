@@ -187,13 +187,10 @@ function makeHandleCall(fallbackHandler: InternalHandler): InternalHandler {
     const isAutomateCheck = from === ZERO_ADDRESS && to === AUTOMATE_MD5_ADDRESS
 
     if (isAutomateCheck) {
-      const queryParams = { ...parsedReq.queryParams }
-      delete (queryParams as any).apiKey
-
       return {
         id: parsedReq.body.id,
         jsonrpc: parsedReq.body.jsonrpc,
-        result: { client: 'automate', params: queryParams },
+        result: { client: 'automate', params: parsedReq.queryParams },
       }
     }
 
