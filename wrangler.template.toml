@@ -1,29 +1,21 @@
-name = "automate-cf-proxy"
-type = "webpack"
-account_id = "($WRANGLER_ACCOUNT_ID)"
-workers_dev = true
-route = ""
-zone_id = ""
-webpack_config = "webpack.config.js"
-kv_namespaces = [
-  { binding = "AUTOMATE_PROXY_KV", id = "($WRANGLER_KV_ID)", preview_id = "($WRANGLER_KV_PREVIEW_ID)" }
-]
+# variables following ($THIS_FORMAT) will be replaced with env variables by buildWranglerToml.js
 
-[env.production]
 name = "automate-proxy"
-route = "rpc.chronologic.network/*"
+compatibility_date = "2022-05-20"
 account_id = "($WRANGLER_ACCOUNT_ID)"
-zone_id = "($WRANGLER_ZONE_ID)"
-webpack_config = "webpack.prod.js"
-kv_namespaces = [
-  { binding = "AUTOMATE_PROXY_KV", id = "($WRANGLER_KV_ID)", preview_id = "($WRANGLER_KV_PREVIEW_ID)" }
-]
+route = "rpc.chronologic.network/*"
+main = "src/index.ts"
+workers_dev = true
+node_compat = true
 
-[env.staging]
-name = "automate-proxy-ropsten"
-kv_namespaces = [
-  { binding = "AUTOMATE_PROXY_KV", id = "($WRANGLER_KV_ID)", preview_id = "($WRANGLER_KV_PREVIEW_ID)" }
-]
+[[kv_namespaces]]
+binding = "AUTOMATE_PROXY_KV"
+id = "($WRANGLER_KV_ID)"
+preview_id = "($WRANGLER_KV_PREVIEW_ID)"
+
+# this whole section will be autopopulated by buildWranglerToml.js
+[vars]
+
 
 [dev]
 port=1337
