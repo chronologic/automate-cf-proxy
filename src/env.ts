@@ -1,5 +1,11 @@
 import { SupportedNetworks } from './types'
 
+// workaround to make env vars appear in process.env
+// see https://developers.cloudflare.com/workers/platform/environment-variables/
+const process = {
+  env: global as any,
+}
+
 export const RELEASE_VERSION = process.env.RELEASE_VERSION as string
 
 export const RPCS: { [key in SupportedNetworks]: string } = {

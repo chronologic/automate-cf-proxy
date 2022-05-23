@@ -4,11 +4,9 @@
   "description": "RPC proxy for Automate",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "build:dev": "NODE_ENV=development npm run build",
     "buildWranglerToml": "node ./buildWranglerToml.js",
-    "dev": "npm run buildWranglerToml && wrangler dev",
-    "deploy:staging": "npm run buildWranglerToml && wrangler publish --env staging",
+    "buildWranglerToml:dev": "NODE_ENV=development node ./buildWranglerToml.js",
+    "dev": "NODE_ENV=development npm run buildWranglerToml && wrangler dev --local",
     "deploy": "npm run buildWranglerToml && wrangler publish --env production",
     "format": "prettier --write '**/*.{ts,js,css,json,md}'",
     "test:clean": "rimraf ./transpiled/src ./transpiled/test",
